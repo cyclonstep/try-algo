@@ -31,7 +31,7 @@ function askTimeTable() {
 
 // IIFE FUNCTION. THIS IS GOING TO BE EXECUTED FIRST. 
 (function askMainQuestion() {
-    rl.question('How many person? ', (answer) => {
+    rl.question('How many persons? ', (answer) => {
         person = parseInt(answer);
         if (utils.isNumeric(person)) {
             askTimeTable();
