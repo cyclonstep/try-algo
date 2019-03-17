@@ -11,7 +11,7 @@ var adjNeighborArr = filterArrayOddEven("odd", neighborArr);
 var summed = sumArray(adjNeighborArr);
 console.log(summed);
 
-if (summed < 1) {
+if (summed < 2) {
     data[1][1] = 1;
 }
 
@@ -88,5 +88,3 @@ function sumArray(array) {
     return sum;
 }
   
-//   res.splice(4, 0, "X");
-
