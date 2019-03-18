@@ -1,90 +1,74 @@
-rows = 5;
-columns = 2;
-users = 7
+'use strict'
 
-var data = createArray(rows, columns);
-// console.dir(data);
-var neighborArr = findingNeighbors(data, 1, 1);
-// console.dir(neighborArr);
-var adjNeighborArr = filterArrayOddEven("odd", neighborArr);
-// console.dir(adjNeighborArr);
-var summed = sumArray(adjNeighborArr);
-console.log(summed);
+var utils = require('./utils');
+var data = require('./data');
 
-if (summed < 2) {
-    data[1][1] = 1;
-}
+let rows = 1;
+let columns = 5;
+let users = 3;
 
-console.dir(data);
+var data = utils.createArray(rows, columns);
+positionsPlacement(data, users);
 
+function positionsPlacement(array, users) {
+    let count = 0;
+    let passed = [];
+    let placedUsers = 0;
+    let unplacedUsers = 0;
 
-function createArray(rows, column) {
-    var arr = [];
-    expRows = parseInt(rows + 2);
-    expCols =  parseInt(column + 2);
-
-    for (let i = 0; i < expRows; i++) {
-        let r = [];
-        for (let j = 0; j < expCols; j++) {
-            if (i === 0 || i === (expRows - 1) || j === 0 || j === (expCols - 1)) {
-                r.push("u");
+    // We want to make sure that we can place each values as distant as possible
+    let cellCount = rows * columns;
+    let halfCellCount = Math.round(cellCount/2) + 1;
+    let neighborsLimit = (users <= halfCellCount) ? 1 : 2;
+    
+    // Normal Placement first
+    for (let x = 1; x <= rows; x++) {
+        for (let y = 1; y <= columns; y++) {
+            // Check neighbors first, start from location 1,1
+            let topLeft = utils.findTopLeftNeighbors(array, x, y);
+            // Sum the value of neighbors
+            let summed = utils.sumArray(topLeft);
+            // Check if it still enough to place user in this position
+            // Based on number of users and its sum limit
+            if (summed < neighborsLimit && placedUsers < users) {
+                array[x][y] = 1;
+                count = (summed === 0) ? count : count + 1;
+                placedUsers += 1;
             } else {
-                r.push(0);
-            }
-        }
-        arr.push(r);
-    }
-
-    return arr;
-}
-
-
-
-function findingNeighbors(myArray, i, j) {
-    let res = [];
-    let rowLimit = myArray.length-1;
-    let columnLimit = myArray[0].length-1;
-
-    for(var x = Math.max(0, i-1); x <= Math.min(i+1, rowLimit); x++) {
-        for(var y = Math.max(0, j-1); y <= Math.min(j+1, columnLimit); y++) {
-        if(x !== i || y !== j) {
-            if (myArray[x][y] === undefined) {
-                res.push("u");
-            } else {
-                res.push(myArray[x][y]);
-            }
-        } else {
-            res.push("X");
-        }
+                passed.push([x, y]);
+            }        
         }
     }
+    // Place users that have not been placed before
+    // by checking lowest sums of neighbors
+    unplacedUsers = users - placedUsers;
 
-    // console.log(`
-    //     [${res[0]} ${res[1]} ${res[2]}]
-    //     [${res[3]} ${res[4]} ${res[5]}]
-    //     [${res[6]} ${res[7]} ${res[8]}]
-    // `);
+    if (unplacedUsers > 0) {
+        let neighborSum = [];
+        passed.map(data => {
+            let i = data[0];
+            let j = data[1];
 
-    return res;
-}
+            let neighborArr = utils.findingNeighbors(array, i, j);
+            let adjNeighborArr = utils.filterArrayOddEven("odd", neighborArr);
+            let summed = utils.sumArray(adjNeighborArr);
 
-function filterArrayOddEven(mode, array) {
-    let result = [];
-    if (mode === "odd") {
-        result = array.filter((element, index, arr) => {
-            return (index % 2 !== 0);
+            neighborSum.push(summed);
         });
-    } else if (mode === "even") {
-        result = array.filter((element, index, arr) => {
-            return (index % 2 !== 0);
-        });
-    } 
-    return result;
-}
+        // Find the smallest neighbors sum
+        for (let k = 0; k < unplacedUsers; k++) {
+            let smallest = utils.indexOfSmallest(neighborSum);
+            let smallestValue = neighborSum[smallest];
+            // add count 
+            count = count + smallestValue;
+            // just checking for the image representation
+            elem = passed[smallest];
+            array[elem[0]][elem[1]] = 1;
 
-function sumArray(array) {
-    let isnum = n => isNaN(n) ? 0 : n;
-    let sum = array.reduce((x, y) => isnum(x) + isnum(y));
-    return sum;
+            neighborSum[smallest] = 9999;
+        }
+
+    }
+    console.log(array);
+    console.log(count); 
 }
-  
