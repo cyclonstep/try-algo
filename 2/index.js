@@ -47,7 +47,7 @@ function askTimeTable() {
 function main(data) {    
     let rangeArray = [];
     let distinct = [];
-    let countArray = new Map()
+    let countArray = new Map();
     let singles = 0;
     let doubles = 0;
 
@@ -56,9 +56,9 @@ function main(data) {
         rangeArray[i] = utils.range(data[i][0], data[i][1]);
     }
 
-    // Get Distinct Array for each number used
+    // Get Distinct Array for each numbers used
     distinct = utils.getDistinct2D(rangeArray);
-    console.dir(distinct);
+    // console.dir(distinct);
 
     // Counting the process
     rangeArray.map(arrayVal  => {
@@ -78,17 +78,13 @@ function main(data) {
         }
     }
 
-    // -1 For the result, because we wanted to know the gap between durations.
+    // -1 For the results, because we wanted to know the gap between durations.
     singles -= 1;
     doubles -= 1;
 
-    if (singles < 0) {
-        singles = 0;
-    }
-    
-    if (doubles < 0) {
-        doubles = 0;
-    }
+    // No negative int for the outputs
+    singles = (singles < 0) ? 0 : singles;
+    doubles = (doubles < 0) ? 0 : doubles;
 
     console.log(`${singles} ${doubles}`);
 }
