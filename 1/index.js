@@ -3,14 +3,17 @@
 var utils = require('./utils');
 var data = require('./data');
 
-let rows = 1;
-let columns = 5;
-let users = 3;
+data.input.map(val => {
+    let rows = val[0];
+    let columns = val[1];
+    let users = val[2];
 
-var data = utils.createArray(rows, columns);
-positionsPlacement(data, users);
+    var data = utils.createArray(rows, columns);
+    var results = positionsPlacement(data, users, rows, columns);
+    console.log(`${val} => ${results}`);
+});
 
-function positionsPlacement(array, users) {
+function positionsPlacement(array, users, rows, columns) {
     let count = 0;
     let passed = [];
     let placedUsers = 0;
@@ -19,7 +22,8 @@ function positionsPlacement(array, users) {
     // We want to make sure that we can place each values as distant as possible
     let cellCount = rows * columns;
     let halfCellCount = Math.round(cellCount/2) + 1;
-    let neighborsLimit = (users <= halfCellCount) ? 1 : 2;
+    // let neighborsLimit = (users <= halfCellCount) ? 1 : 2;
+    let neighborsLimit = 1;
     
     // Normal Placement first
     for (let x = 1; x <= rows; x++) {
@@ -62,13 +66,15 @@ function positionsPlacement(array, users) {
             // add count 
             count = count + smallestValue;
             // just checking for the image representation
-            elem = passed[smallest];
+            let elem = passed[smallest];
             array[elem[0]][elem[1]] = 1;
 
             neighborSum[smallest] = 9999;
         }
 
     }
-    console.log(array);
-    console.log(count); 
+    // Uncomment this console log if you want to see the placement
+    // console.log(array);
+    // console.log(count); 
+    return count;
 }
