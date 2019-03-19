@@ -1,3 +1,5 @@
+// Create 2D array circumcised with unimportant values (in this case, "u") 
+// To avoid error array boundary break when trying to check neighbors.
 function createArray(rows, column) {
     var arr = [];
     let expRows = parseInt(rows + 2);
